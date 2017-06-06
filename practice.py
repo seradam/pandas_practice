@@ -128,3 +128,102 @@ print(s[1:] + s[:-1])
 #############################################################################################################
 # DataFrame
 #############################################################################################################
+
+# DataFrame is a 2-dimensional labeled data structure with columns of potentially different types.
+# You can think of it like a spreadsheet or SQL table, or a dict of Series objects.
+# It is generally the most commonly used pandas object.
+
+# ***********************************************************************************************************
+# From dict of Series or dicts
+# ***********************************************************************************************************
+
+# The result index will be the union of the indexes of the various Series. If there are any nested dicts, these
+# will be first converted to Series. If no columns are passed, the columns will be the sorted list of dict keys.
+
+d = {'one': pd.Series([1., 2., 3.], index=['a', 'b', 'c']),
+     'two': pd.Series([1., 2., 3., 4.], index=['a', 'b', 'c', 'd'])}
+
+df = pd.DataFrame(d)
+
+print("\n df: \n")
+print(df)
+
+# The roles of index and column are similar to Series'
+
+df1 = pd.DataFrame(d, index=['d', 'b', 'a'], columns=['two', 'three'])
+
+print("\n df1: \n")
+print(df1)
+
+# The row and column labels can be accessed respectively by accessing the index and columns attributes:
+
+print("\n df.index: \n")
+print(df.index)
+print("\n df.columns: \n")
+print(df.columns)
+
+# ***********************************************************************************************************
+# From dict of ndarrays / lists
+# ***********************************************************************************************************
+
+# The ndarrays must all be the same length. If an index is passed, it must clearly also be the same length as
+# the arrays. If no index is passed, the result will be range(n), where n is the array length.
+
+# If lengths of arrays are different: "ValueError: arrays must all be same length"
+
+d = {'one': [1., 2., 3., 4.],
+     'two': [4., 3., 2., 1.]}
+
+print("\n pd.DataFrame(d): \n")
+print(pd.DataFrame(d))
+print("\n pd.DataFrame(d, index=['a', 'b', 'c', 'd']): \n")
+print(pd.DataFrame(d, index=['a', 'b', 'c', 'd']))
+
+# ***********************************************************************************************************
+# From structured or record array
+# ***********************************************************************************************************
+
+data = np.zeros((2,), dtype=[('A', 'i4'),('B', 'f4'),('C', 'a10')])
+print(data)
+
+# ERRE MAJD KÉSŐBB VISSZATÉREK :D
+# https://docs.scipy.org/doc/numpy/user/basics.rec.html
+# b1, i1, i2, i4, i8, u1, u2, u4, u8, f2, f4, f8, c8, c16, a<n> (representing bytes, ints, unsigned ints,
+# 7floats, complex and fixed length strings of specified byte lengths)
+
+# ***********************************************************************************************************
+# From a list of dicts
+# ***********************************************************************************************************
+
+data2 = [{'a': 1, 'b': 2}, {'a': 5, 'b': 10, 'c': 20}]
+
+print("\n pd.DataFrame(data2): \n")
+print(pd.DataFrame(data2))
+
+# And if I give index and column - both are optional
+
+print("\n pd.DataFrame(data2, index=['first', 'second'], columns=['a', 'b']): \n")
+print(pd.DataFrame(data2, index=['first', 'second'], columns=['a', 'b']))
+
+
+# ***********************************************************************************************************
+# From a dict of tuples
+# ***********************************************************************************************************
+
+# You can automatically create a multi-indexed frame by passing a tuples dictionary
+
+df_multi = pd.DataFrame({('a', 'b'): {('A', 'B'): 1, ('A', 'C'): 2},
+                         ('a', 'a'): {('A', 'C'): 3, ('A', 'B'): 4},
+                         ('a', 'c'): {('A', 'B'): 5, ('A', 'C'): 6},
+                         ('b', 'a'): {('A', 'C'): 7, ('A', 'B'): 8},
+                         ('b', 'b'): {('A', 'D'): 9, ('A', 'B'): 10}})
+
+print("\n df_multi: \n")
+print(df_multi)
+
+# ***********************************************************************************************************
+# From a Series
+# ***********************************************************************************************************
+
+# The result will be a DataFrame with the same index as the input Series, and with one column whose name is
+# the original name of the Series (only if no other column name provided).
