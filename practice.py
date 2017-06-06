@@ -183,13 +183,15 @@ print(pd.DataFrame(d, index=['a', 'b', 'c', 'd']))
 # From structured or record array
 # ***********************************************************************************************************
 
-data = np.zeros((2,), dtype=[('A', 'i4'),('B', 'f4'),('C', 'a10')])
-print(data)
-
-# ERRE MAJD KÉSŐBB VISSZATÉREK :D
-# https://docs.scipy.org/doc/numpy/user/basics.rec.html
+# A little help: https://docs.scipy.org/doc/numpy/user/basics.rec.html
 # b1, i1, i2, i4, i8, u1, u2, u4, u8, f2, f4, f8, c8, c16, a<n> (representing bytes, ints, unsigned ints,
 # 7floats, complex and fixed length strings of specified byte lengths)
+
+data = np.zeros((2,), dtype=[('A', 'i4'),('B', 'f4'),('C', 'a10')])
+data[:] = [(1, 2., 'Hello'), (2, 3., "World")]
+
+print("\n pd.DataFrame(data: \n")
+print(pd.DataFrame(data))
 
 # ***********************************************************************************************************
 # From a list of dicts
@@ -227,3 +229,75 @@ print(df_multi)
 
 # The result will be a DataFrame with the same index as the input Series, and with one column whose name is
 # the original name of the Series (only if no other column name provided).
+
+# ***********************************************************************************************************
+# Alternate Constructors
+# ***********************************************************************************************************
+
+# -----------------------------------------------------------------------------------------------------------
+# DataFrame.from_dict
+# -----------------------------------------------------------------------------------------------------------
+
+# DataFrame.from_dict takes a dict of dicts or a dict of array-like sequences and returns a DataFrame.
+# It operates like the DataFrame constructor except for the orient parameter which is 'columns' by default,
+# but which can be set to 'index' in order to use the dict keys as row labels.
+
+d1 = {'one': 1, 'two': 2}
+d2 = {'one': 3, 'four': 4}
+d_of_d = {'A': d1, 'B': d2}
+
+print("\n pd.DataFrame.from_dict: \n")
+print(pd.DataFrame.from_dict(d_of_d, orient='index'))
+
+# -----------------------------------------------------------------------------------------------------------
+# DataFrame.from_records
+# -----------------------------------------------------------------------------------------------------------
+
+# DataFrame.from_records takes a list of tuples or an ndarray with structured dtype.
+# Works analogously to the normal DataFrame constructor, except that index maybe be
+# a specific field of the structured dtype to use as the index. For example:
+
+print("\n data: \n")
+print(data)
+print("\n pd.DataFrame.from_records(data, index='C': \n")
+print(pd.DataFrame.from_records(data, index='C'))
+
+# -----------------------------------------------------------------------------------------------------------
+# DataFrame.from_items
+# -----------------------------------------------------------------------------------------------------------
+
+# DataFrame.from_items works analogously to the form of the dict constructor that takes a sequence
+# of (key, value) pairs, where the keys are column (or row, in the case of orient='index') names,
+# and the value are the column values (or row values). This can be useful for constructing a DataFrame
+# with the columns in a particular order without having to pass an explicit list of columns:
+
+print(pd.DataFrame.from_items([('A', [1, 2, 3]), ('B', [4, 5, 6])], orient='index', columns=['one', 'two', 'three']))
+
+# If you use orient='index', you also must use columns or else you get a TypeError
+
+# ***********************************************************************************************************
+# Column selection, addition, deletion
+# ***********************************************************************************************************
+
+# Select columns and rows:
+
+print("\n df: \n")
+print(df)
+
+print("\n select a column: \n")
+print(df['one'])    # based on name
+print(df.ix[:, 0])   # based on location
+
+print("\n select a row: \n")
+print(df.loc['a'])    # based on name
+print(df.iloc[0])   # based on location
+
+# Add new columns:
+
+df['three'] = df['one'] * df['two']
+df['flag'] = df['one'] > 2
+
+print("\n df with new columns: \n")
+print(df)
+
+
