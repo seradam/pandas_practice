@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 import savReaderWriter as spss
 import matplotlib.pyplot as plt
+import statsmodels.formula.api as sm
+from sklearn import datasets, linear_model
 
-# read sav file and setup colmn names:
+# read sav file and setup column names:
 
 raw_data = spss.SavReader('jazzadatbazis.sav', returnHeader=True)
 raw_data_list = list(raw_data)
@@ -66,3 +68,27 @@ new_data_a[b'demgroup'] = np.where(new_data_a[b'eletkor']>= new_data_a[b'eletkor
 
 print('\ndemograpgic group + age:\n')
 print(new_data_a[[b'demgroup', b'eletkor']])
+
+# linear regression:
+
+# This analysis is substantively meaningless, but it is perfect for show the operation
+
+length = 37
+x = new_data_a[b'nem'].values
+y = new_data_a[b'ID'].values
+x = x.reshape(length, 1)
+y = y.reshape(length, 1)
+regr = linear_model.LinearRegression()
+regr.fit(x, y)
+
+plt.scatter(x, y,  color='black')
+plt.plot(x, regr.predict(x), color='blue', linewidth=3)
+plt.xticks(())
+plt.yticks(())
+plt.show()
+
+b = [regr.coef_, regr.intercept_]
+
+print("\nInterpretation of regression:\n The intercept is ", b[1], "which means that the average ID "
+"of men is", b[1], "The b coefficient is", b[0], "which means that the average of women's ID is so less "
+"than men's")
