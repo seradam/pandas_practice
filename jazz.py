@@ -55,7 +55,14 @@ print(pd.crosstab(new_data_a[b'vegzettseg'], new_data_a[b'nem']).apply(lambda r:
 # Display frequency and percentage in one table is possible, but very complex and ugly, I don't suggest it
 
 
-# gender distribution iin a pie chart
+# gender distribution in a pie chart
 
 new_data_a[b'nem'].value_counts().plot.pie(labels=['male', 'female'])
 plt.show()
+
+# create demographic group column
+
+new_data_a[b'demgroup'] = np.where(new_data_a[b'eletkor']>= new_data_a[b'eletkor'].mean(), 'old', 'young')
+
+print('\ndemograpgic group + age:\n')
+print(new_data_a[[b'demgroup', b'eletkor']])
